@@ -74,7 +74,7 @@ def lista_clientes():
 
     except Exception as e:
         print(f"Erro: {e}")
-        return "Erro ao listas clientes.", 500
+        return "Erro ao listar clientes.", 500
 
 @app.route("/inserirCliente", methods=['POST'])
 def set_cliente():
@@ -241,7 +241,23 @@ def delete_produto(id_produto):
     except Exception as e:
         return f"Erro ao excluir produto: {e}", 500
 
-@app.route("/pedidos", methods=['POST'])
+@app.route("/pedidos")
+def lista_clientes():
+    try:
+        pedidos = pedidos_collection.find()
+
+        pedidos_serializado = []
+        for pedido in pedidos:
+            pedido['_id'] = str(pedido['_id'])
+            pedidos_serializado.append(pedido)
+        
+        return jsonify(pedidos_serializado), 200
+
+    except Exception as e:
+        print(f"Erro: {e}")
+        return "Erro ao listar os pedidos.", 500
+    
+@app.route("/inserirPedido", methods=['POST'])
 def set_pedido():
     dados = request.get_json()
     id_cliente = dados['id_cliente']

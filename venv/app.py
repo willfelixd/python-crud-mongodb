@@ -216,7 +216,7 @@ def update_produto(id_produto):
     except Exception as e:
         return f"Erro ao atualizar produto: {e}", 500
 
-@app.route("/excluiproduto/<id_produto>", methods=["DELETE"])
+@app.route("/excluiProduto/<id_produto>", methods=["DELETE"])
 def delete_produto(id_produto):
     try:
 
@@ -288,6 +288,33 @@ def set_pedido():
     else:
         return jsonify({"error": "Erro ao criar pedido"}), 500
 
+@app.route("/alteraPedidos/<id_pedido>", methods=['PUT'])
+def update_pedido(id_pedido):
+    dados = request.get_json()
+    id_cliente = dados.get('id_cliente')
+    id_produto = dados.get('id_produto')
+    valor = dados.get('valor')
+
+    # Verificar se o pedido existe
+    pedido = pedidos_collection.find_one({"_id": id_pedido})
+    if not pedido:
+        return jsonify({"error": "Pedido não encontrado"}), 404
+
+    # Atualizar os campos fornecidos
+    novos_dados = {}
+    if id_cliente:
+        novos_dados['id_cliente'] = id_cliente
+    if id_produto:
+        novos_dados['id_produto'] = id_produto
+    if valor:
+        novos_dados['valor'] = valor
+
+    resultado = pedidos_collection.update_one({"_id": id_pedido}, {"$set": novos_dados})
+
+    if resultado.modified_count > 0:
+        return jsonify({"message": "Pedido atualizado com sucesso"}), 200
+    else:
+        return jsonify({"error": "Erro ao atualizar o pedido"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

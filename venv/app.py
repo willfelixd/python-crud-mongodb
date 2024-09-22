@@ -246,6 +246,7 @@ def set_pedido():
     dados = request.get_json()
     id_cliente = dados['id_cliente']
     id_produto = dados['id_produto']
+    valor = dados['valor']  # Certifique-se de que o valor foi passado corretamente
 
     # Verificar se o cliente existe
     cliente = clientes_collection.find_one({"id_cliente": id_cliente})
@@ -261,15 +262,15 @@ def set_pedido():
     novo_pedido = {
         "id_cliente": id_cliente,
         "id_produto": id_produto,
-        "data_pedido": id_pedido,
+        "data_pedido": dados.get('data_pedido', None),  # Use uma data, se disponível
         "valor": valor
     }
     resultado = pedidos_collection.insert_one(novo_pedido)
 
     if resultado.inserted_id:
-        return jsonify({"Pedido criado com sucesso"}), 201
+        return jsonify({"message": "Pedido criado com sucesso"}), 201
     else:
-        return jsonify({"Erro ao criar pedido"}), 500
+        return jsonify({"error": "Erro ao criar pedido"}), 500
 
 
 if __name__ == "__main__":

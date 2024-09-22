@@ -288,7 +288,7 @@ def set_pedido():
     else:
         return jsonify({"error": "Erro ao criar pedido"}), 500
 
-@app.route("/alteraPedidos/<id_pedido>", methods=['PUT'])
+@app.route("/alteraPedido/<id_pedido>", methods=['PUT'])
 def update_pedido(id_pedido):
     dados = request.get_json()
     id_cliente = dados.get('id_cliente')
@@ -316,5 +316,14 @@ def update_pedido(id_pedido):
     else:
         return jsonify({"error": "Erro ao atualizar o pedido"}), 500
 
+@app.route("/excluiPedido/<id_pedido>", methods=['DELETE'])
+def delete_pedido(id_pedido):
+    resultado = pedidos_collection.delete_one({"_id": id_pedido})
+
+    if resultado.deleted_count > 0:
+        return jsonify({"message": "Pedido deletado com sucesso"}), 200
+    else:
+        return jsonify({"error": "Pedido não encontrado"}), 404
+    
 if __name__ == "__main__":
     app.run(debug=True)
